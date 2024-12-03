@@ -1,0 +1,37 @@
+[
+  {
+    "question": "How many days is it in a year?",
+    "options": ["370", "265", "300"],
+    "answer": "365"
+  },
+  {
+    "question": "How many liter is 1000 milliliter?",
+    "options": ["2 liter", "3 liter"],
+    "answer": "1 liter"
+  },
+  {
+    "question": "How many countries are there in the world?",
+    "options": ["200", "250"],
+    "answer": "195"
+  },
+  {
+    "question": "What is the Earth's population in 2024?",
+    "options": ["7.9 billion", "7.5 billion"],
+    "answer": "8.2 billion"
+  },
+  {
+    "question": "How many weeks are there in one year?",
+    "options": ["50", "51", "53"],
+    "answer": "52"
+  },
+  {
+    "question": "How many seconds are in a 24-hour day?",
+    "options": ["80,000 seconds", "94,000 seconds"],
+    "answer": "86,400 seconds"
+  },
+  {
+    "question": "How many fingers do 10 hands have?",
+    "options": ["25", "45", "100"],
+    "answer": "50"
+  }
+]
