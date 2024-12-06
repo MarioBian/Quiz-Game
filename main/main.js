@@ -1,22 +1,31 @@
-const button = document.getElementById("btn");
 const main = document.getElementById("root");
 const url = "file.json";
-let restartBtn;
-let Timeout;
+let startBtn;
+let timeOut;
+let restartBtn = null;
+let timerInterval;
 
 main.className = "container text-center my-5";
-button.className = "btn btn-primary btn-lg mt-3";
-
 const message = createPageElement(
   main,
   "div",
-  `Good luck!`,
+  "Good luck!",
   "alert alert-info"
 );
+
+createStartBtn(main);
+
+function createStartBtn(parent) {
+  startBtn = document.createElement("button");
+  startBtn.innerHTML = "start";
+  startBtn.className = "btn btn-primary btn-lg mt-3";
+
+  parent.appendChild(startBtn);
+
+  startBtn.onclick = loadData;
+}
 const output = createPageElement(main, "div", "", "game mt-4");
 output.style.display = "none";
-
-button.onclick = loadData;
 
 function createPageElement(parent, type, html, className) {
   const element = document.createElement(type);
@@ -27,7 +36,7 @@ function createPageElement(parent, type, html, className) {
 }
 
 function loadData() {
-  toggleButtonVisibility(button, "none");
+  toggleButtonVisibility(startBtn, "none");
 
   fetch(url)
     .then((res) => res.json())
@@ -69,6 +78,34 @@ function showNextQuestion(gameData) {
   );
   output.innerHTML = "";
   renderQuestion(question, gameData);
+
+  startTimer(10, question, gameData);
+}
+
+function startTimer(duration, question, gameData) {
+  const timerDisplay = createPageElement(
+    output,
+    "div",
+    "",
+    "timer alert alert-secondary"
+  );
+  let timeLeft = duration;
+
+  timerDisplay.innerHTML = `Time left ${timeLeft}s`;
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    timerDisplay.innerHTML = `Time left: ${timeLeft}s`;
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+    }
+  }, 1000);
+
+  timeOut = setTimeout(() => {
+    clearInterval(timerInterval);
+    handleAnswerTimeout(question, gameData);
+  }, duration * 1000);
 }
 
 function renderQuestion(question, gameData) {
@@ -90,6 +127,9 @@ function renderQuestion(question, gameData) {
 }
 
 function handleAnswerSelection(selectedOption, question, gameData) {
+  clearInterval(timerInterval);
+  clearTimeout(timeOut);
+
   const isCorrect = selectedOption === question.answer;
   if (isCorrect) {
     gameData.score++;
@@ -103,7 +143,15 @@ function handleAnswerSelection(selectedOption, question, gameData) {
       "alert alert-danger"
     );
   }
+  disableOptionButtons();
+  setTimeout(() => showNextQuestion(gameData), 2000);
+}
 
+function handleAnswerTimeout(question, gameData) {
+  showMessage(
+    `Time's up! The correct answer was: <strong>${question.answer}</strong>`,
+    "alert alert-danger"
+  );
   disableOptionButtons();
   setTimeout(() => showNextQuestion(gameData), 2000);
 }
@@ -111,6 +159,20 @@ function handleAnswerSelection(selectedOption, question, gameData) {
 function disableOptionButtons() {
   const buttons = output.querySelectorAll(".btn-outline-primary");
   buttons.forEach((btn) => (btn.disabled = true));
+}
+
+function toggleButtonVisibility(button, displayValue) {
+  button.style.display = displayValue;
+}
+
+function showMessage(text, className) {
+  message.className = className;
+  message.innerHTML = text;
+}
+
+function handleError(errorText) {
+  console.error("Error:", errorText);
+  showMessage(errorText, "alert alert-danger");
 }
 
 function gameOver(gameData) {
@@ -135,21 +197,7 @@ function gameOver(gameData) {
 function restartGame() {
   showMessage("Press Start button", "alert alert-info");
   output.innerHTML = "";
-  toggleButtonVisibility(button, "inline-block");
+  toggleButtonVisibility(startBtn, "inline-block");
   toggleButtonVisibility(restartBtn, "none");
-  button.onclick = loadData;
-}
-
-function toggleButtonVisibility(button, displayValue) {
-  button.style.display = displayValue;
-}
-
-function showMessage(text, className) {
-  message.className = className;
-  message.innerHTML = text;
-}
-
-function handleError(errorText) {
-  console.error("Error:", errorText);
-  showMessage(errorText, "alert alert-danger");
+  startBtn.onclick = loadData;
 }
