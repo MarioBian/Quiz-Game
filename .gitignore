@@ -1,0 +1,9 @@
+.DS_Store    # macOS
+
+*.tmp
+*.bak
+*.swp
+
+.vscode/
+*.sublime-workspace
+*.code-workspace
